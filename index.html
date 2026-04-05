@@ -1,0 +1,741 @@
+<!--Tiers--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------Tiers-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiers</title>
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="animated-bg" aria-hidden="true"></div>
+
+<!--Main Wrapper/Container(everything lives within)---------------------------------------------------------------------------------------------------------------------------Main Wrapper/Container-->
+   
+    <main class="app">
+
+<!--Launch Screen----------------------------------------------------------------------------------------------------------------------------------------------------------------------Launch Screen-->
+    
+    <section class="screen launch-screen active" id="launchScreen" aria-label="Launch screen">
+      <div class="launch-card">
+        <div class="title-stack"><h1 class="text one">Tiers</h1><h1 class="text two">Tiers</h1></div>
+        <p class="subtitle">Build a bracket-style tier list, preview each option, then send the finalists into Tournament.</p> <!--text here-->
+        
+        <!--Begin Button: intro to config page-->
+        <button class="begin-btn" id="launchBeginBtn" type="button">Begin</button>
+      </div>
+    </section>
+
+<!--Configuration Screen--------------------------------------------------------------------------------------------------------------------------------------------------------Configuration Screen-->
+<!--Input Text & Images and pick Game Mode-->
+
+<!-- Left Panel -->
+    <section class="screen config-screen" id="configScreen" aria-label="Configuration screen" hidden>
+      <aside class="panel config-left">
+        <div class="config-main-content" id="configMainContent">
+          <h2 class="panel-title" style="text-align:center;">Tiers</h2>
+          <div class="config-content-stack">
+            <h3 class="section-title">Information</h3>
+            <div class="side-copy scrollbox" id="infoCopy">
+              <p>Eight options are locked in for this demo.</p>								           <!-- text here -->
+              <p>Each option needs at least text or an image before continuing.</p>			<!-- text here -->
+              <p>Only One Round is enabled for this game mode.</p>							         <!-- text here -->
+            </div>
+            <div class="config-settings-overlay" id="configSettingsOverlay" hidden>
+              <div class="config-settings-card">
+                <h3 class="section-title">Settings</h3>
+                <p class="overlay-copy">Settings are not configured in this demo.</p>
+              </div>
+            </div>
+          </div>
+          <!-- Settings Button: for demo does nothing really -->
+          <button class="tier-btn config-button" id="configSettingsBtn" type="button" aria-pressed="false">Settings</button>
+        </div>
+      </aside>
+
+<!-- Middle Panel -->
+      <main class="panel config-centre">
+        <div class="config-centre-inner" id="configInner">
+          <h2 class="panel-title">Customisation</h2>
+          <p class="count-subtitle">Number of options:</p>
+          <div class="counter-row" aria-label="Option Count">
+            <button class="arrow-btn" id="countDownBtn" type="button" disabled>◀</button>
+            <div class="count-bubble" id="countBubble"><input id="optionCount" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="2" pattern="[0-9]*" aria-label="Number of options" value="8" readonly /></div>
+            <button class="arrow-btn" id="countUpBtn" type="button" disabled>▶</button>
+          </div>
+          <div class="count-label" id="bracketLabel">(4 brackets)</div>
+          <div class="option-list-wrap">
+            <div class="option-list-head"><h3 class="section-title">Options</h3></div>
+            <div class="scrollbox option-list" id="optionList"></div>
+          </div>
+        </div>
+      </main>
+
+<!-- Right Panel -->
+      <aside class="panel config-right">
+        <h2 class="panel-title">Game Mode</h2>
+        <div class="play-types" role="tablist" aria-label="Play Type">
+          <button class="tier-btn active" id="playOneBtn" type="button">One Round</button>
+          <button class="tier-btn disabled-mode" id="playThreeBtn" type="button" disabled>Three Rounds</button>
+          <button class="tier-btn disabled-mode" id="playTrueBtn" type="button" disabled>True Rankings</button>
+        </div>
+        <p class="play-desc" id="playDesc"></p>
+        <!-- Confirm Button: config to tournament. -->
+        <button class="tier-btn config-button confirm-btn" id="confirmBtn" type="button">Confirm</button>
+      </aside>
+    </section>
+
+<!--Tournament Screen--------------------------------------------------------------------------------------------------------------------------------------------------------------Tournament Screen-->
+<!--Brackets & Matchups-->
+
+    <section class="screen tournament-screen" id="tournamentScreen" aria-label="Tournament screen" hidden>
+      <header class="panel tournament-header">
+        <div class="tournament-nav">
+          <button class="top-action-btn top-icon-btn" id="tournamentBackBtn" type="button">← Back</button>
+          <button class="top-action-btn top-icon-btn" id="tournamentSettingsBtn" type="button" aria-label="Tournament settings"><span>↓</span><span>Settings</span><span class="gear-small" aria-hidden="true">⚙</span><span>↓</span></button>
+        </div>
+        <div class="title-block">
+          <h2 class="panel-title">Tournament</h2>
+          <p class="tournament-subtitle">Pick the preferred from the two large options</p> 									<!-- text here -->
+        </div>
+        <div class="tournament-actions">
+          <button class="top-action-btn top-icon-btn" id="toggleBracketBtn" type="button">↓ Bracket Overview ↓</button>
+        </div>
+        <div class="tournament-status" id="tournamentStatus">Round 1 - Match 1</div>
+      </header>
+
+      <section class="tournament-body">
+        <section class="battle-panel panel" id="battlePanel">
+          <div class="battle-grid" id="battleGrid">
+            <button class="match-choice" id="battleLeftBtn" type="button" disabled><div class="choice-visual" id="leftVisual"></div></button>
+            <div class="battle-vs" aria-hidden="true">VS</div>
+            <button class="match-choice" id="battleRightBtn" type="button" disabled><div class="choice-visual" id="rightVisual"></div></button>
+          </div>
+        </section>
+
+        <button class="results-fab" id="resultsFab" type="button">See Results!</button>
+
+        <section class="bracket-panel panel" id="bracketPanel" hidden>
+          <div class="overlay-head"><div class="overlay-spacer" aria-hidden="true"></div><h3 class="overlay-title">Bracket Overview</h3><div class="overlay-spacer" aria-hidden="true"></div></div>
+          <div class="bracket-board" id="tournamentBoard">
+            <svg class="connector-layer" id="connectorLayer" aria-hidden="true"></svg>
+            <div class="slot outer-top" data-slot-id="leftTop"></div>
+            <div class="slot outer-bottom" data-slot-id="leftBottom"></div>
+            <div class="slot left-semi" data-slot-id="leftSemi"></div>
+            <div class="slot final" data-slot-id="final"></div>
+            <div class="slot right-semi" data-slot-id="rightSemi"></div>
+            <div class="slot right-top" data-slot-id="rightTop"></div>
+            <div class="slot right-bottom" data-slot-id="rightBottom"></div>
+          </div>
+        </section>
+
+        <section class="tournament-settings-panel panel" id="tournamentSettingsPanel" hidden>
+          <div class="overlay-head"><div class="overlay-spacer" aria-hidden="true"></div><h3 class="overlay-title">Settings</h3><div class="overlay-spacer" aria-hidden="true"></div></div>
+          <div class="overlay-shell overlay-shell-wide"><p class="overlay-copy">Settings are not configured in this demo.</p></div>
+        </section>
+      </section>
+    </section>
+
+
+ <!--Score Screen-----------------------------------------------------------------------------------------------------------------------------------------------------------------------Score Screen-->
+<!--Winner / Leaderboard / Print-->
+
+    <section class="screen score-screen" id="scoreScreen" aria-label="Score screen" hidden>
+      <header class="panel score-header">
+        <div class="score-nav">
+          <button class="top-action-btn top-icon-btn" id="scoreBackBtn" type="button">← Back To Customisation</button>
+          <button class="top-action-btn top-icon-btn" id="scoreSettingsBtn" type="button" aria-label="Score settings"><span>↓</span><span>Settings</span><span class="gear-small" aria-hidden="true">⚙</span><span>↓</span></button>
+        </div>
+        <div class="score-title-block">
+          <h2 class="panel-title">Score</h2>
+          <p class="score-subtitle">click print to save results</p>
+        </div>
+        <div class="score-actions">
+          <button class="score-action-btn top-action-btn" id="printWinnerBtn" type="button">Print Just Winner</button>
+          <button class="score-action-btn top-action-btn" id="printLeaderboardBtn" type="button">Print Just Leaderboard</button>
+          <button class="score-action-btn top-action-btn" id="printAllBtn" type="button">Print All</button>
+        </div>
+      </header>
+
+      <section class="score-body" id="scoreBody">
+        <section class="panel score-pane score-winner-pane">
+          <div class="score-pane-head"><h3 class="score-pane-title">Winner</h3></div>
+          <div class="score-winner-box" id="winnerBox"></div>
+        </section>
+        <section class="panel score-pane score-leaderboard-pane">
+          <div class="score-pane-head"><h3 class="score-pane-title">Leaderboard</h3></div>
+          <div class="leaderboard-box" id="leaderboardBox"></div>
+        </section>
+      </section>
+
+      <section class="score-settings-panel panel" id="scoreSettingsPanel" hidden>
+        <div class="overlay-head"><div class="overlay-spacer" aria-hidden="true"></div><h3 class="overlay-title">Settings</h3><div class="overlay-spacer" aria-hidden="true"></div></div>
+        <div class="overlay-shell overlay-shell-wide"><p class="overlay-copy">Settings are not configured in this demo.</p></div>
+      </section>
+    </section>
+  </main>
+
+    <script>
+
+//Core Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------Core Constants//												
+    const DEFAULT_OPTION_COUNT = 8;
+    const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+    const MIN_OPTIONS = 2;
+    const MAX_OPTIONS = 32;
+							                       //Why are notes here both "//" & "<!---->" ?? and dont you say "its because of the lines" i know why but its stupid. its already bad enough switching from /* */ -_-
+
+	
+//Central App State: UI reads&writes from this object instead of from scattered globals.--------------------------------------------------------------------------------------------Central App State//
+const state = {
+      optionCount: DEFAULT_OPTION_COUNT,
+      playType: "one",
+      optionValues: [],
+      tournament: null,
+      bracketOpen: false,
+      tournamentSettingsOpen: false,
+      configSettingsOpen: false,
+      scoreSettingsOpen: false,
+      resultsReady: false,
+      printMode: "all"
+    };
+
+//Helper: DOM lookups shorter & more readable. ------------------------------------------------------------------------------------------------------------------------------------------------Helper//			
+	//make function called "el" that takes the id and returns HTML element with that id
+	//const launchScreen = document.getElementById("launchScreen");
+	//becomes:
+	//const launchScreen = el("launchScreen");
+	//is it that much shorter? no. is it worth the hassle? probably.
+const el = id => document.getElementById(id);
+    const launchScreen = el("launchScreen");
+    const configScreen = el("configScreen");
+    const tournamentScreen = el("tournamentScreen");
+    const scoreScreen = el("scoreScreen");
+    const scoreBody = el("scoreBody");
+    const configInner = el("configInner");
+    const launchBeginBtn = el("launchBeginBtn");
+    const countDownBtn = el("countDownBtn");
+    const countUpBtn = el("countUpBtn");
+    const optionCountInput = el("optionCount");
+    const bracketLabel = el("bracketLabel");
+    const optionList = el("optionList");
+    const playOneBtn = el("playOneBtn");
+    const playThreeBtn = el("playThreeBtn");
+    const playTrueBtn = el("playTrueBtn");
+    const playDesc = el("playDesc");
+    const confirmBtn = el("confirmBtn");
+    const tournamentStatus = el("tournamentStatus");
+    const tournamentBackBtn = el("tournamentBackBtn");
+    const tournamentSettingsBtn = el("tournamentSettingsBtn");
+    const toggleBracketBtn = el("toggleBracketBtn");
+    const battlePanel = el("battlePanel");
+    const battleLeftBtn = el("battleLeftBtn");
+    const battleRightBtn = el("battleRightBtn");
+    const leftVisual = el("leftVisual");
+    const rightVisual = el("rightVisual");
+    const bracketPanel = el("bracketPanel");
+    const tournamentSettingsPanel = el("tournamentSettingsPanel");
+    const configSettingsOverlay = el("configSettingsOverlay");
+    const configSettingsBtn = el("configSettingsBtn");
+    const infoCopy = el("infoCopy");
+    const connectorLayer = el("connectorLayer");
+    const tournamentBoard = el("tournamentBoard");
+    const resultsFab = el("resultsFab");
+    const scoreBackBtn = el("scoreBackBtn");
+    const scoreSettingsBtn = el("scoreSettingsBtn");
+    const scoreSettingsPanel = el("scoreSettingsPanel");
+    const printWinnerBtn = el("printWinnerBtn");
+    const printLeaderboardBtn = el("printLeaderboardBtn");
+    const printAllBtn = el("printAllBtn");
+    const winnerBox = el("winnerBox");
+    const leaderboardBox = el("leaderboardBox");
+
+    const slotEls = {
+      leftTop: tournamentBoard.querySelector('[data-slot-id="leftTop"]'),
+      leftBottom: tournamentBoard.querySelector('[data-slot-id="leftBottom"]'),
+      leftSemi: tournamentBoard.querySelector('[data-slot-id="leftSemi"]'),
+      final: tournamentBoard.querySelector('[data-slot-id="final"]'),
+      rightSemi: tournamentBoard.querySelector('[data-slot-id="rightSemi"]'),
+      rightTop: tournamentBoard.querySelector('[data-slot-id="rightTop"]'),
+      rightBottom: tournamentBoard.querySelector('[data-slot-id="rightBottom"]')
+    };
+    
+    const esc = v => String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
+
+// Screen Switcher: hide inactive & refresh active
+function showScreen(name){
+      const s = {launch: launchScreen, config: configScreen, tournament: tournamentScreen, score: scoreScreen};
+      Object.entries(s).forEach(([k, node]) => { node.hidden = k !== name; node.classList.toggle("active", k === name); });
+      if(name === "tournament"){
+        requestAnimationFrame(() => { renderTournament(); updateConnectors(); updateTournamentStatus(); syncTournamentOverlayState(); syncOverlayRects(); });
+      }
+      if(name === "score"){
+        renderScore(); syncScoreSettingsState(); syncOverlayRects();
+      }
+    }
+
+//Buttony Stuff-------------------------------------------------------------------------------------------------------------------------------------------------------------------------Buttony Stuff//
+    function setButtonArrowLabel(button, label, open) {
+      if (!button) return;
+      const arrow = open ? "↑" : "↓";																								// ▼ ▲ or ↓ ↑?? I went with ↓ ↑ //
+      button.innerHTML = `<span>${arrow}</span><span>${label}</span><span aria-hidden="true">⚙</span><span>${arrow}</span>`;
+      button.classList.toggle("active", open);
+      button.setAttribute("aria-pressed", String(!!open));
+    }
+
+    function setBracketButtonLabel(button, open) {
+      if (!button) return;
+      const arrow = open ? "↑" : "↓";
+      button.innerHTML = `${arrow} Bracket Overview ${arrow}`;
+      button.classList.toggle("active", open);
+      button.setAttribute("aria-pressed", String(!!open));
+    }
+
+    function formatOrdinal(n) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${n}st`;
+      if (mod10 === 2 && mod100 !== 12) return `${n}nd`;
+      if (mod10 === 3 && mod100 !== 13) return `${n}rd`;
+      return `${n}th`;
+    }
+
+    function optionHasData(opt){ return Boolean((opt.label ?? "").trim()) || Boolean(opt.image); }
+    function matchLabel(option){ return (option?.label ?? "").trim(); }
+    function bracketCountFromOptions(count){ return Math.ceil(count / 2); }
+
+    function ensureOptionValues() {
+      state.optionValues = Array.from({ length: state.optionCount }, (_, i) => ({
+        label: state.optionValues[i]?.label ?? "",
+        image: state.optionValues[i]?.image ?? "",
+        name: `O${String(i + 1).padStart(2, "0")}`
+      }));
+    }
+
+    function renderPlayDescription() {
+      playDesc.textContent = "Only One Round is available for this demo. The other modes are locked for now.";
+    }
+
+    function syncResetButton(resetBtn, index) {
+      const filled = optionHasData(state.optionValues[index]);
+      resetBtn.disabled = !filled;
+      resetBtn.classList.toggle("active", filled);
+    }
+
+    function syncImageButton(imageBox, index) {
+      const opt = state.optionValues[index];
+      const hasImage = Boolean(opt.image);
+      imageBox.classList.toggle("has-image", hasImage);
+      if (hasImage) {
+        imageBox.style.backgroundImage = `url(${opt.image})`;
+        imageBox.innerHTML = `<span class="option-image-icon" aria-hidden="true">✓</span><span>Image Set</span>`;
+      } else {
+        imageBox.style.backgroundImage = "";
+        imageBox.innerHTML = `<span class="option-image-icon" aria-hidden="true">🖼</span><span>Insert Image Here</span>`;
+      }
+    }
+
+      function flashInvalidCard(card){ card.classList.remove("invalid"); void card.offsetWidth; card.classList.add("invalid"); setTimeout(() => card.classList.remove("invalid"), 700); }
+    function isSupportedImageFile(file){ return !!file && ((/^image\/(png|jpeg|gif)$/i.test(file.type) || /\.(png|jpe?g|gif)$/i.test(file.name || "")) && file.size <= MAX_IMAGE_BYTES); }
+
+
+//Option Editor-------------------------------------------------------------------------------------------------------------------------------------------------------------------------Option Editor//
+function renderOptionInputs(previousScroll = optionList.scrollTop) {
+      optionList.innerHTML = "";
+      state.optionValues.forEach((opt, index) => {
+        const row = document.createElement("div"); row.className = "option-row";
+        const meta = document.createElement("div"); meta.className = "option-meta";
+        const num = document.createElement("div"); num.className = "option-num"; num.textContent = `${index + 1}.`;
+        const resetBtn = document.createElement("button"); resetBtn.className = "option-reset"; resetBtn.type = "button"; resetBtn.textContent = "↺"; resetBtn.title = "Reset this option"; syncResetButton(resetBtn, index);
+        resetBtn.addEventListener("click", () => { if (resetBtn.disabled) return; state.optionValues[index].label = ""; state.optionValues[index].image = ""; renderOptionInputs(optionList.scrollTop); });
+        meta.append(num, resetBtn);
+        const card = document.createElement("div"); card.className = "option-card"; card.dataset.index = String(index);
+        const imageBox = document.createElement("button"); imageBox.className = "option-image"; imageBox.type = "button"; imageBox.title = "Upload or change image";
+        const fileInput = document.createElement("input"); fileInput.type = "file"; fileInput.accept = ".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif"; fileInput.hidden = true;
+        const textWrap = document.createElement("div"); textWrap.className = "option-text";
+        const input = document.createElement("input"); input.className = "option-input"; input.type = "text"; input.maxLength = 20; input.placeholder = "Insert Text Here"; input.value = opt.label;
+        input.addEventListener("input", () => { state.optionValues[index].label = input.value.slice(0,20); syncResetButton(resetBtn, index); card.classList.remove("invalid"); });
+        imageBox.addEventListener("click", () => fileInput.click());
+        fileInput.addEventListener("change", () => {
+          const file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          if (!isSupportedImageFile(file)) { fileInput.value = ""; state.optionValues[index].image = ""; flashInvalidCard(card); return; }
+          const reader = new FileReader();
+          reader.onload = () => { state.optionValues[index].image = String(reader.result || ""); card.classList.remove("invalid"); renderOptionInputs(optionList.scrollTop); };
+          reader.readAsDataURL(file);
+        });
+        textWrap.appendChild(input);
+        card.append(imageBox, textWrap, fileInput);
+        row.append(meta, card);
+        optionList.appendChild(row);
+        syncImageButton(imageBox, index);
+      });
+      requestAnimationFrame(() => { optionList.scrollTop = previousScroll; });
+    }
+
+   function applyOptionCount() {
+      state.optionCount = DEFAULT_OPTION_COUNT;
+      optionCountInput.value = String(DEFAULT_OPTION_COUNT);
+      bracketLabel.textContent = `(${bracketCountFromOptions(DEFAULT_OPTION_COUNT)} brackets)`;
+      ensureOptionValues();
+      renderOptionInputs();
+      renderPlayDescription();
+      countDownBtn.disabled = true;
+      countUpBtn.disabled = true;
+      countDownBtn.classList.add("disabled");
+      countUpBtn.classList.add("disabled");
+    }
+
+    function validateConfigOptions() {
+      const invalidIndexes = [];
+      state.optionValues.forEach((opt, index) => { if (!optionHasData(opt)) invalidIndexes.push(index); });
+      return invalidIndexes;
+    }
+
+    function markInvalidOptions(invalidIndexes) { optionList.querySelectorAll(".option-card").forEach((card, i) => card.classList.toggle("invalid", invalidIndexes.includes(i))); }
+    function scrollToFirstInvalidOption(invalidIndexes) { if (!invalidIndexes.length) return; const first = optionList.querySelector(`.option-card[data-index="${invalidIndexes[0]}"]`); if (first) first.scrollIntoView({ block: "center", behavior: "smooth" }); }
+    function clearInvalidStates(){ confirmBtn.classList.remove("danger-state","danger-shake"); optionList.querySelectorAll(".option-card").forEach(card => card.classList.remove("invalid")); }
+
+    function setPlayType(type){ state.playType = type; [playOneBtn, playThreeBtn, playTrueBtn].forEach(btn => btn.classList.remove("active")); if(type==="one") playOneBtn.classList.add("active"); if(type==="three") playThreeBtn.classList.add("active"); if(type==="true") playTrueBtn.classList.add("active"); renderPlayDescription(); }
+
+    function shuffleArray(array){ const arr = array.slice(); for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+    function createMatch(left=null, right=null){ return { left, right, winner:null, loser:null, resolved:false }; }
+
+
+//Tournament Setup: (shuffle options and create bracket structure)-------------------------------------------------------------------------------------------------------------------Tournament Setup//
+function buildTournament() {
+      const participants = state.optionValues.slice(0, state.optionCount).map((opt, index) => ({ ...opt, index, name:`O${String(index + 1).padStart(2, "0")}`, wins:0 }));
+      const shuffled = shuffleArray(participants);
+      state.tournament = {
+        players: participants,
+        round1: [
+          createMatch(shuffled[0], shuffled[1]),
+          createMatch(shuffled[2], shuffled[3]),
+          createMatch(shuffled[4], shuffled[5]),
+          createMatch(shuffled[6], shuffled[7])
+        ],
+        leftSemi: createMatch(),
+        rightSemi: createMatch(),
+        final: createMatch(),
+        champion: null
+      };
+      syncNextRounds();
+    }
+
+    function syncNextRounds(){
+      const t = state.tournament; if(!t) return;
+      t.leftSemi.left = t.round1[0].winner; t.leftSemi.right = t.round1[1].winner;
+      t.rightSemi.left = t.round1[2].winner; t.rightSemi.right = t.round1[3].winner;
+      t.final.left = t.leftSemi.winner; t.final.right = t.rightSemi.winner;
+    }
+
+    function getActiveMatch(){
+      const t = state.tournament; if(!t) return null;
+      const order = [t.round1[0], t.round1[1], t.round1[2], t.round1[3], t.leftSemi, t.rightSemi, t.final];
+      return order.find(m => !m.resolved && m.left && m.right) || null;
+    }
+
+    function roundTextForActive(){
+      const t = state.tournament; if(!t) return "Round 1 - Match 1";
+      const active = getActiveMatch();
+      if(!active) return state.resultsReady ? "Results ready" : "Bracket complete";
+      const roundIndex = [t.round1[0], t.round1[1], t.round1[2], t.round1[3]].findIndex(m => m === active);
+      if(roundIndex >= 0) return `Round 1 - Match ${roundIndex + 1}`;
+      if(active === t.leftSemi || active === t.rightSemi) return "Semi Final";
+      return "Final";
+    }
+
+    function updateTournamentStatus(){
+      tournamentStatus.textContent = state.resultsReady ? "Results ready - See Results!" : roundTextForActive();
+      setBracketButtonLabel(toggleBracketBtn, state.bracketOpen);
+      resultsFab.classList.toggle("show", state.resultsReady && !tournamentScreen.hidden && !state.tournamentSettingsOpen);
+    }
+
+    function visualContentMarkup(option){
+      if(!option) return `<div class="choice-placeholder"></div>`;
+      const safeLabel = esc(matchLabel(option));
+      const safeImage = option.image;
+      const safeName = esc(option.name || "Option");
+      if(safeImage && safeLabel) return `<img class="preview-media" src="${safeImage}" alt="${safeName}" /><div class="choice-placeholder">${safeLabel}</div>`;
+      if(safeImage) return `<img class="preview-media" src="${safeImage}" alt="${safeName}" />`;
+      if(safeLabel) return `<div class="choice-placeholder">${safeLabel}</div>`;
+      return ``;
+    }
+
+    function scoreVisualMarkup(option){
+      if(!option) return `<div class="score-media-frame"><div class="score-media-label"></div></div>`;
+      const safeLabel = esc(matchLabel(option));
+      const safeImage = option.image;
+      const safeName = esc(option.name || "Option");
+      const imageMarkup = safeImage ? `<img class="preview-media" src="${safeImage}" alt="${safeName}" />` : "";
+      const labelMarkup = safeLabel ? `<div class="score-media-label">${safeLabel}</div>` : "";
+      return `<div class="score-media-frame">${imageMarkup}${labelMarkup}</div>`;
+    }
+    function previewMarkup(option){ return `<div class="preview-wrap">${visualContentMarkup(option)}</div>`; }
+    function choiceMarkup(option){ return `<div class="preview-wrap">${visualContentMarkup(option)}</div>`; }
+
+    function updateBattlePanel(){
+      const active = getActiveMatch();
+      if(!state.tournament){ battlePanel.style.display = "none"; return; }
+      battlePanel.style.display = "flex";
+      if(!active){ battleLeftBtn.disabled = true; battleRightBtn.disabled = true; leftVisual.innerHTML = ""; rightVisual.innerHTML = ""; return; }
+      const blocked = state.bracketOpen || state.tournamentSettingsOpen;
+      battleLeftBtn.disabled = blocked || active.resolved || !active.left;
+      battleRightBtn.disabled = blocked || active.resolved || !active.right;
+      leftVisual.innerHTML = choiceMarkup(active.left);
+      rightVisual.innerHTML = choiceMarkup(active.right);
+    }
+
+    function renderMatchButton(option, { active=false, resolved=false, winner=false, loser=false, onClick=null } = {}) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "match-btn";
+      btn.innerHTML = option ? previewMarkup(option) : `<div class="preview-wrap"><div class="preview-placeholder"></div></div>`;
+      if(!option){ btn.classList.add("pending"); btn.disabled = true; return btn; }
+      if(winner) btn.classList.add("winner");
+      if(loser) btn.classList.add("loser");
+      if(active && !resolved) btn.classList.add("active-option");
+      if(!active && !resolved) btn.classList.add("pending");
+      if(resolved) btn.disabled = true;
+      if(active && !resolved && onClick && state.bracketOpen && !state.tournamentSettingsOpen) btn.addEventListener("click", onClick); else btn.disabled = true;
+      return btn;
+    }
+
+    function renderTournament() {
+      if(!state.tournament) return;
+      const active = getActiveMatch();
+      const slots = [
+        [slotEls.leftTop, state.tournament.round1[0]],
+        [slotEls.leftBottom, state.tournament.round1[1]],
+        [slotEls.leftSemi, state.tournament.leftSemi],
+        [slotEls.final, state.tournament.final],
+        [slotEls.rightSemi, state.tournament.rightSemi],
+        [slotEls.rightTop, state.tournament.round1[2]],
+        [slotEls.rightBottom, state.tournament.round1[3]]
+      ];
+      slots.forEach(([slot, match]) => {
+        if(!slot) return;
+        slot.innerHTML = "";
+        const card = document.createElement("div");
+        card.className = "match-slot";
+        if(!match.left || !match.right) card.classList.add("pending");
+        if(match.resolved) card.classList.add("resolved");
+        if(active === match) card.classList.add("active");
+        const leftBtn = renderMatchButton(match.left, { active: active===match, resolved: match.resolved, winner: match.resolved && match.winner===match.left, loser: match.resolved && match.loser===match.left, onClick: () => pickWinner(match, match.left) });
+        const vs = document.createElement("div"); vs.className = "battle-vs"; vs.textContent = "VS";
+        const rightBtn = renderMatchButton(match.right, { active: active===match, resolved: match.resolved, winner: match.resolved && match.winner===match.right, loser: match.resolved && match.loser===match.right, onClick: () => pickWinner(match, match.right) });
+        card.append(leftBtn, vs, rightBtn);
+        slot.appendChild(card);
+      });
+      updateTournamentStatus();
+      updateBattlePanel();
+      requestAnimationFrame(updateConnectors);
+    }
+
+    function pickWinner(match, winner){
+      if(!state.tournament || !match || match.resolved || state.tournamentSettingsOpen) return;
+      const loser = winner === match.left ? match.right : match.left;
+      if(!winner || !loser) return;
+      match.winner = winner; match.loser = loser; match.resolved = true;
+      winner.wins = (winner.wins || 0) + 1;
+      syncNextRounds();
+      if(match === state.tournament.final){ state.tournament.champion = winner; state.resultsReady = true; resultsFab.classList.add("show"); }
+      renderTournament(); updateTournamentStatus(); renderScore();
+    }
+
+//SVG Connectors: Draw lines to *try* to connect the brackets but so far not succeeding....--------------------------------------------------------------------------------------------SVG Connectors//
+function updateConnectors(){
+      if(!state.tournament || tournamentScreen.hidden || bracketPanel.hidden) return;
+      const boardRect = tournamentBoard.getBoundingClientRect();
+      connectorLayer.setAttribute("viewBox", `0 0 ${boardRect.width} ${boardRect.height}`);
+      connectorLayer.setAttribute("preserveAspectRatio","none");
+      connectorLayer.innerHTML = "";
+      const rectOf = slot => {
+        if(!slot) return null;
+        const r = slot.getBoundingClientRect();
+        return { left:r.left-boardRect.left, right:r.right-boardRect.left, top:r.top-boardRect.top, bottom:r.bottom-boardRect.top, midX:(r.left-boardRect.left)+r.width/2, midY:(r.top-boardRect.top)+r.height/2 };
+      };
+      const s = { leftTop:rectOf(slotEls.leftTop), leftBottom:rectOf(slotEls.leftBottom), leftSemi:rectOf(slotEls.leftSemi), final:rectOf(slotEls.final), rightSemi:rectOf(slotEls.rightSemi), rightTop:rectOf(slotEls.rightTop), rightBottom:rectOf(slotEls.rightBottom) };
+      const line = (x1,y1,x2,y2,stroke="rgba(255,255,255,0.34)",w=2.2) => { const el = document.createElementNS("http://www.w3.org/2000/svg","line"); el.setAttribute("x1",x1); el.setAttribute("y1",y1); el.setAttribute("x2",x2); el.setAttribute("y2",y2); el.setAttribute("stroke",stroke); el.setAttribute("stroke-width",w); el.setAttribute("stroke-linecap","round"); connectorLayer.appendChild(el); };
+      const elbow = (x1,y1,x2,y2) => { const midX = x1 + (x2-x1)*0.5; const poly = document.createElementNS("http://www.w3.org/2000/svg","polyline"); poly.setAttribute("points", `${x1},${y1} ${midX},${y1} ${midX},${y2} ${x2},${y2}`); poly.setAttribute("fill","none"); poly.setAttribute("stroke","rgba(255,255,255,0.34)"); poly.setAttribute("stroke-width","2.2"); poly.setAttribute("stroke-linecap","round"); poly.setAttribute("stroke-linejoin","round"); connectorLayer.appendChild(poly); };
+      const attachVerticalPair = (a,b,targetLeft,targetRight,leftToRight=true) => {
+        if(!a||!b||!targetLeft||!targetRight) return;
+        const y1 = a.midY, y2 = b.midY; const fromA = leftToRight ? a.right : a.left; const fromB = leftToRight ? b.right : b.left;
+        if(leftToRight){ elbow(fromA,y1,targetLeft,y1); elbow(fromB,y2,targetLeft,y2); line(targetLeft,y1,targetLeft,y2); }
+        else { elbow(fromA,y1,targetRight,y1); elbow(fromB,y2,targetRight,y2); line(targetRight,y1,targetRight,y2); }
+      };
+      if(s.leftTop && s.leftBottom && s.leftSemi) attachVerticalPair(s.leftTop,s.leftBottom,s.leftSemi.left,s.leftSemi.right,true);
+      if(s.rightTop && s.rightBottom && s.rightSemi) attachVerticalPair(s.rightTop,s.rightBottom,s.rightSemi.left,s.rightSemi.right,false);
+      if(s.leftSemi && s.final){ elbow(s.leftSemi.right,s.leftSemi.midY-16,s.final.left,s.leftSemi.midY-16); elbow(s.leftSemi.right,s.leftSemi.midY+16,s.final.left,s.leftSemi.midY+16); line(s.leftSemi.right,s.leftSemi.midY-16,s.leftSemi.right,s.leftSemi.midY+16); }
+      if(s.rightSemi && s.final){ elbow(s.final.right,s.rightSemi.midY-16,s.rightSemi.left,s.rightSemi.midY-16); elbow(s.final.right,s.rightSemi.midY+16,s.rightSemi.left,s.rightSemi.midY+16); line(s.rightSemi.left,s.rightSemi.midY-16,s.rightSemi.left,s.rightSemi.midY+16); }
+    }
+
+    function syncConfigSettingsState(){ const open = state.configSettingsOpen; configSettingsOverlay.hidden = !open; infoCopy.hidden = open; configSettingsBtn.classList.toggle("active", open); configSettingsBtn.setAttribute("aria-pressed", String(open)); }
+    function syncScoreSettingsState(){ const open = state.scoreSettingsOpen; scoreSettingsPanel.hidden = !open; scoreSettingsBtn.classList.toggle("active", open); scoreSettingsBtn.setAttribute("aria-pressed", String(open)); syncOverlayRects(); }
+    function syncOverlayRects() {
+      const setRect = (panel, target, topOffset = 0) => {
+        if (!panel || !target || target.hidden) return;
+        const r = target.getBoundingClientRect();
+        panel.style.left = `${Math.round(r.left)}px`;
+        panel.style.top = `${Math.round(r.top + topOffset)}px`;
+        panel.style.width = `${Math.round(r.width)}px`;
+        panel.style.height = `${Math.round(r.height)}px`;
+        panel.style.right = "auto";
+        panel.style.bottom = "auto";
+      };
+
+      if (!tournamentScreen.hidden) {
+        setRect(tournamentSettingsPanel, battlePanel, 0);
+        setRect(bracketPanel, battlePanel, 0);
+      }
+      if (!scoreScreen.hidden) {
+        setRect(scoreSettingsPanel, scoreBody, 0);
+      }
+    }
+
+//Overlay Sync: bracket/settings/button aligned------------------------------------------------------------------------------------------------------------------------------------------Overlay Sync//
+function syncTournamentOverlayState(){
+      bracketPanel.hidden = !state.bracketOpen;
+      tournamentSettingsPanel.hidden = !state.tournamentSettingsOpen;
+      bracketPanel.classList.toggle("open", state.bracketOpen);
+      setBracketButtonLabel(toggleBracketBtn, state.bracketOpen);
+      setButtonArrowLabel(tournamentSettingsBtn, "Settings", state.tournamentSettingsOpen);
+      battlePanel.classList.toggle("disabled-ui", state.bracketOpen || state.tournamentSettingsOpen);
+      const active = getActiveMatch();
+      battleLeftBtn.disabled = state.bracketOpen || state.tournamentSettingsOpen || !active?.left;
+      battleRightBtn.disabled = state.bracketOpen || state.tournamentSettingsOpen || !active?.right;
+      if(state.tournament) renderTournament();
+      updateTournamentStatus();
+      syncOverlayRects();
+      requestAnimationFrame(updateConnectors);
+    }
+
+    function toggleConfigSettings(force){ state.configSettingsOpen = typeof force === "boolean" ? force : !state.configSettingsOpen; syncConfigSettingsState(); }
+    function toggleTournamentSettings(force){ state.tournamentSettingsOpen = typeof force === "boolean" ? force : !state.tournamentSettingsOpen; syncTournamentOverlayState(); syncOverlayRects(); }
+    function toggleBracketOverview(force){ state.bracketOpen = typeof force === "boolean" ? force : !state.bracketOpen; syncTournamentOverlayState(); syncOverlayRects(); }
+
+    function buildLeaderboard() {
+      if(!state.tournament?.players) return [];
+      const sorted = state.tournament.players.slice().sort((a,b)=>(b.wins||0)-(a.wins||0) || a.index - b.index);
+      const groups = []; let rank = 0; let i = 0;
+      while(i < sorted.length){
+        const score = sorted[i].wins || 0;
+        const group = [];
+        while(i < sorted.length && (sorted[i].wins || 0) === score){ group.push(sorted[i]); i++; }
+        rank++; groups.push({ rank, score, items: group });
+      }
+      return groups;
+    }
+
+//Score Rendering: Display champion & rank groups.------------------------------------------------------------------------------------------------------------------------------------Score Rendering//
+function renderScore(){
+      const champion = state.tournament?.champion || getActiveMatch()?.winner || null;
+      const groups = buildLeaderboard();
+      winnerBox.innerHTML = champion ? `<div class="winner-display choice-visual"><div class="winner-card"><div class="winner-media">${scoreVisualMarkup(champion)}</div></div></div>` : `<div class="battle-empty">No winner yet</div>`;
+      leaderboardBox.innerHTML = groups.length ? groups.map(group => `<div class="leaderboard-group"><p class="leaderboard-line"><strong>${formatOrdinal(group.rank)})</strong> Score: <strong>${group.score}</strong></p><div class="leaderboard-item-row">${group.items.map(item => `<div class="leaderboard-mini-card choice-visual">${scoreVisualMarkup(item)}</div>`).join("")}</div></div>`).join("") : `<div class="battle-empty">No leaderboard available</div>`;
+    }
+
+    function showScorePage(){ renderScore(); state.scoreSettingsOpen = false; syncScoreSettingsState(); resultsFab.classList.remove("show"); showScreen("score"); }
+    function startTournament(){ buildTournament(); state.resultsReady = false; resultsFab.classList.remove("show"); showScreen("tournament"); state.bracketOpen = false; state.tournamentSettingsOpen = false; syncTournamentOverlayState(); renderTournament(); updateConnectors(); }
+    function resetConfiguration(){
+      state.tournament = null;
+      state.bracketOpen = false;
+      state.tournamentSettingsOpen = false;
+      state.scoreSettingsOpen = false;
+      state.resultsReady = false;
+      state.printMode = "all";
+      document.body.classList.remove("print-winner","print-leaderboard");
+      syncConfigSettingsState();
+      syncTournamentOverlayState();
+      syncScoreSettingsState();
+      renderScore();
+      updateBattlePanel();
+    }
+    function confirmConfig(){ const invalidIndexes = validateConfigOptions(); if(invalidIndexes.length){ clearInvalidStates(); markInvalidOptions(invalidIndexes); scrollToFirstInvalidOption(invalidIndexes); confirmBtn.classList.add("danger-state"); confirmBtn.classList.remove("danger-shake"); void confirmBtn.offsetWidth; confirmBtn.classList.add("danger-shake"); configInner.classList.remove("conflict"); void configInner.offsetWidth; configInner.classList.add("conflict"); setTimeout(() => { confirmBtn.classList.remove("danger-state"); confirmBtn.classList.remove("danger-shake"); configInner.classList.remove("conflict"); }, 600); return; } clearInvalidStates(); startTournament(); }
+    function setPrintMode(mode){ state.printMode = mode; document.body.classList.remove("print-winner","print-leaderboard"); if(mode==="winner") document.body.classList.add("print-winner"); if(mode==="leaderboard") document.body.classList.add("print-leaderboard"); }
+    function cleanupPrintMode(){ document.body.classList.remove("print-winner","print-leaderboard"); state.printMode = "all"; }
+    function printScore(mode){ if(!state.tournament?.champion) return; setPrintMode(mode); requestAnimationFrame(() => window.print()); }
+
+    battleLeftBtn.addEventListener("click", () => { const active = getActiveMatch(); if(active) pickWinner(active, active.left); });
+    battleRightBtn.addEventListener("click", () => { const active = getActiveMatch(); if(active) pickWinner(active, active.right); });
+    launchBeginBtn.addEventListener("click", () => showScreen("config"));
+    tournamentBackBtn.addEventListener("click", () => { state.bracketOpen = false; state.tournamentSettingsOpen = false; syncTournamentOverlayState(); showScreen("config"); });
+    tournamentSettingsBtn.addEventListener("click", () => toggleTournamentSettings());
+    toggleBracketBtn.addEventListener("click", () => toggleBracketOverview());
+    confirmBtn.addEventListener("click", confirmConfig);
+    playOneBtn.addEventListener("click", () => setPlayType("one"));
+    playThreeBtn.addEventListener("click", () => {});
+    playTrueBtn.addEventListener("click", () => {});
+    configSettingsBtn.addEventListener("click", () => toggleConfigSettings());
+    resultsFab.addEventListener("click", showScorePage);
+    scoreBackBtn.addEventListener("click", () => {
+      state.resultsReady = false;
+      state.scoreSettingsOpen = false;
+      state.bracketOpen = false;
+      state.tournamentSettingsOpen = false;
+      state.tournament = null;
+      resultsFab.classList.remove("show");
+      syncScoreSettingsState();
+      syncTournamentOverlayState();
+      updateBattlePanel();
+      showScreen("config");
+    });
+
+    scoreSettingsBtn.addEventListener("click", () => { state.scoreSettingsOpen = !state.scoreSettingsOpen; syncScoreSettingsState(); });
+    printWinnerBtn.addEventListener("click", () => printScore("winner"));
+    printLeaderboardBtn.addEventListener("click", () => printScore("leaderboard"));
+    printAllBtn.addEventListener("click", () => printScore("all"));
+    countDownBtn.addEventListener("click", () => { if(state.optionCount > MIN_OPTIONS){ state.optionCount--; applyOptionCount(); } });
+    countUpBtn.addEventListener("click", () => { if(state.optionCount < MAX_OPTIONS){ state.optionCount++; applyOptionCount(); } });
+    window.addEventListener("afterprint", cleanupPrintMode);
+    window.addEventListener("resize", () => {
+      if(!tournamentScreen.hidden){ renderTournament(); updateConnectors(); }
+      if(!scoreScreen.hidden) renderScore();
+      syncOverlayRects();
+    });
+
+// Initial Boot: Prepare UI & Launch screen.
+window.addEventListener("load", () => {
+      optionCountInput.value = String(DEFAULT_OPTION_COUNT);
+      optionCountInput.readOnly = true;
+      state.optionValues = [];
+      applyOptionCount();
+      setPlayType("one");
+      showScreen("launch");
+      syncConfigSettingsState();
+      syncTournamentOverlayState();
+      syncScoreSettingsState();
+      updateBattlePanel();
+      updateTournamentStatus();
+      renderScore();
+      syncOverlayRects();
+    });
+
+    function visualContentMarkup(option){
+      if(!option) return `<div class="choice-placeholder"></div>`;
+      const safeLabel = esc(matchLabel(option));
+      const safeImage = option.image;
+      const safeName = esc(option.name || "Option");
+      if(safeImage && safeLabel) return `<img class="preview-media" src="${safeImage}" alt="${safeName}" /><div class="choice-placeholder">${safeLabel}</div>`;
+      if(safeImage) return `<img class="preview-media" src="${safeImage}" alt="${safeName}" />`;
+      if(safeLabel) return `<div class="choice-placeholder">${safeLabel}</div>`;
+      return ``;
+    }
+
+    function scoreVisualMarkup(option){
+      if(!option) return `<div class="score-media-frame"><div class="score-media-label"></div></div>`;
+      const safeLabel = esc(matchLabel(option));
+      const safeImage = option.image;
+      const safeName = esc(option.name || "Option");
+      const imageMarkup = safeImage ? `<img class="preview-media" src="${safeImage}" alt="${safeName}" />` : "";
+      const labelMarkup = safeLabel ? `<div class="score-media-label">${safeLabel}</div>` : "";
+      return `<div class="score-media-frame">${imageMarkup}${labelMarkup}</div>`;
+    }
+  </script>
+</body>
+</html>
+
+
+
